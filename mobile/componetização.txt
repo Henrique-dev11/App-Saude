@@ -1,0 +1,1 @@
+O projeto que estamos fazendo e usar um método de componetização para as pasta e arquivos, e fazer uma separação detalhada dos códigos. 
