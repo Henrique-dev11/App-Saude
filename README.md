@@ -27,6 +27,6 @@ O aplicativo conta com um painel completo de ferramentas para o seu cuidado diá
 
 A tela inicial foi projetada para oferecer máxima legibilidade e organização em formato de *cards* dinâmicos:
 
-![Dashboard do App Saúde](dashboard.png)
+![Dashboard do App Saúde](./mobile/assets/dashboard.png)
 
 ---
