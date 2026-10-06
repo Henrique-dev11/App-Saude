@@ -4,6 +4,15 @@ import { View, Text, Animated, Easing } from 'react-native';
 import styles from './style';
 import Button from '../../components/ButtonAgua';
 import Input from '../../components/Input';
+import Card from '../../components/card';
+import {
+    calcularMeta,
+    adicionarConsumo,
+    calcularRestante,
+    calcularPercentual,
+    converterParaLitros,
+} from '../../Function/functionAgua';
+
 
 export default function Agua() {
     const [peso, setPeso] = useState('');
@@ -119,78 +128,104 @@ export default function Agua() {
             />
 
 
-            <View style={styles.card}>
-                <Text style={styles.title}>Consumo de Água</Text>
+<Card titulo="Consumo de Água">
 
-                <View style={styles.bottleWrap}>
-                    <View style={styles.bottleCap} />
-                    <View style={styles.bottleNeck} />
+    {/* Garrafa */}
+    <View style={styles.bottleWrap}>
+        <View style={styles.bottleCap} />
+        <View style={styles.bottleNeck} />
 
-                    <View style={styles.bottleBody}>
-                        <Animated.View
-                            style={[
-                                styles.bottleFill,
+        <View style={styles.bottleBody}>
+            <Animated.View
+                style={[
+                    styles.bottleFill,
+                    {
+                        height: `${Math.max(percentual, 0)}%`,
+                    },
+                ]}
+            >
+                <Animated.View
+                    style={[
+                        styles.waterWave,
+                        {
+                            transform: [
                                 {
-                                    height: `${Math.max(percentual, 0)}%`,
+                                    translateX: fillWave.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [-18, 18],
+                                    }),
                                 },
-                            ]}
-                        >
-                            <Animated.View
-                                style={[
-                                    styles.waterWave,
-                                    {
-                                        transform: [
-                                            {
-                                                translateX: fillWave.interpolate({
-                                                    inputRange: [0, 1],
-                                                    outputRange: [-18, 18],
-                                                }),
-                                            },
-                                        ],
-                                    },
-                                ]}
-                            />
-                        </Animated.View>
-                    </View>
-                </View>
+                            ],
+                        },
+                    ]}
+                />
+            </Animated.View>
+        </View>
+    </View>
 
-                <Text style={styles.levelText}>{metaDiaria > 0 ? `${percentualLabel}% da meta` : 'Meta não definida'}</Text>
+    <Text style={styles.levelText}>
+        {metaDiaria > 0
+            ? `${percentualLabel}% da meta`
+            : 'Meta não definida'
+        }
+    </Text>
 
-                <Input
-                    placeholder="Digite seu peso (kg)"
-                    value={peso}
-                    onChangeText={setPeso}
-                    keyboardType="numeric"
+    <Input
+        placeholder="Digite seu peso (kg)"
+        value={peso}
+        onChangeText={setPeso}
+        keyboardType="numeric"
+    />
+
+    <Button
+        label="Calcular meta"
+        onPress={calcularAgua}
+    />
+
+    {metaDiaria > 0 ? (
+        <>
+            <Text style={styles.resultado}>
+                Meta do dia: {litroMeta} L
+            </Text>
+
+            <Text style={styles.resultado}>
+                Já bebeu: {litroAtual} L
+            </Text>
+
+            <Text style={styles.resultado}>
+                Faltam: {(restante / 1000).toFixed(2)} L
+            </Text>
+
+            <View style={styles.progressBarBackground}>
+                <Animated.View
+                    style={[
+                        styles.progressBarFill,
+                        {
+                            width: `${percentual}%`,
+                        },
+                    ]}
+                />
+            </View>
+
+            <View style={styles.actionsRow}>
+                <Button
+                    label="Adicionar 250 ml"
+                    onPress={adicionarAgua}
                 />
 
-                <Button label="Calcular meta" onPress={calcularAgua} />
-
-                {metaDiaria > 0 ? (
-                    <>
-                        <Text style={styles.resultado}>Meta do dia: {litroMeta} L</Text>
-                        <Text style={styles.resultado}>Já bebeu: {litroAtual} L</Text>
-                        <Text style={styles.resultado}>Faltam: {(restante / 1000).toFixed(2)} L</Text>
-
-                        <View style={styles.progressBarBackground}>
-                            <Animated.View
-                                style={[
-                                    styles.progressBarFill,
-                                    {
-                                        width: `${percentual}%`,
-                                    },
-                                ]}
-                            />
-                        </View>
-
-                        <View style={styles.actionsRow}>
-                            <Button label="Adicionar 250 ml" onPress={adicionarAgua} />
-                            <Button label="Reset" onPress={resetMeta} />
-                        </View>
-                    </>
-                ) : (
-                    <Text style={styles.resultado}>Informe seu peso para calcular sua meta.</Text>
-                )}
+                <Button
+                    label="Reset"
+                    onPress={resetMeta}
+                />
             </View>
+        </>
+    ) : (
+        <Text style={styles.resultado}>
+            Informe seu peso para calcular sua meta.
+        </Text>
+    )}
+
+</Card>
         </View>
     );
 }

@@ -9,20 +9,7 @@ const styles = StyleSheet.create({
         padding: 20,
         overflow: 'hidden',
     },
-    card: {
-        width: '100%',
-        maxWidth: 430,
-        backgroundColor: 'rgba(255,255,255,0.7)',
-        borderRadius: 30,
-        padding: 22,
-        alignItems: 'center',
-        shadowColor: '#0f4c81',
-        shadowOffset: { width: 0, height: 18 },
-        shadowOpacity: 0.14,
-        shadowRadius: 20,
-        elevation: 8,
-        zIndex: 2,
-    },
+    
     title: {
         fontSize: 30,
         fontWeight: '700',
