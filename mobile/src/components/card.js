@@ -1,12 +1,17 @@
 import { View, Text, StyleSheet } from 'react-native';
 
-
-
-const Card = () => {
+const Card = ({ titulo, children }) => {
     return (
         <View style={styles.card}>
-            <Text style={styles.title}>Card Title</Text>
-            <Text>Conteúdo do cartão</Text>
+
+            {titulo && (
+                <Text style={styles.title}>
+                    {titulo}
+                </Text>
+            )}
+
+            {children}
+
         </View>
     );
 };
@@ -14,25 +19,32 @@ const Card = () => {
 export default Card;
 
 const styles = StyleSheet.create({
+
     card: {
-   flex: 1,
-    margin: 8,
-    height: 120,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    
-    // Sombra para o card (opcional)
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+        width: '100%',
+        maxWidth: 430,
+        backgroundColor: 'rgba(255,255,255,0.7)',
+        borderRadius: 30,
+        padding: 22,
+        alignItems: 'center',
+
+        shadowColor: '#0f4c81',
+        shadowOffset: {
+            width: 0,
+            height: 18,
+        },
+        shadowOpacity: 0.14,
+        shadowRadius: 20,
+
+        elevation: 8,
     },
+
     title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 8,
+        fontSize: 30,
+        fontWeight: '700',
+        color: '#0d5d8f',
+        marginBottom: 18,
+        letterSpacing: 0.5,
     },
+
 });

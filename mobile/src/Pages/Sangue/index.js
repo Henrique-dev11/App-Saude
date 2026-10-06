@@ -6,44 +6,48 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 
 export default function Sangue() {
-    const [hemoglobina, setHemoglobina] = useState('');
-    const [hematocrito, setHematocrito] = useState('');
-    const [plaquetas, setPlaquetas] = useState('');
-    const [leucocitos, setLeucocitos] = useState('');
-    const [resultado, setResultado] = useState(null);
+    
+    const [tipoSanguineo, setTipoSanguineo] = useState('');
+    const [doacao, setDoacao] = useState(null);
 
-    function analisarDados() {
-        if (!hemoglobina || !hematocrito || !plaquetas || !leucocitos) {
-            setResultado({
-                titulo: 'Dados incompletos',
-                mensagem: 'Preencha todos os campos para avaliar o hemograma.',
+
+
+    function verificarDoacao() {
+        if (!tipoSanguineo) {
+            setDoacao({
+                titulo: 'Tipo sanguíneo não informado',
+                mensagem: 'Informe o tipo sanguíneo para verificar compatibilidade.',
                 destaque: '#d93025',
             });
             return;
         }
 
-        const hgb = Number(hemoglobina.replace(',', '.'));
-        const hct = Number(hematocrito.replace(',', '.'));
-        const plt = Number(plaquetas.replace(',', '.'));
-        const wbc = Number(leucocitos.replace(',', '.'));
+        const compatibilidade = {
+            'A+': ['A+', 'AB+'],
+            'A-': ['A+', 'A-', 'AB+', 'AB-'],
+            'B+': ['B+', 'AB+'],
+            'B-': ['B+', 'B-', 'AB+', 'AB-'],
+            'AB+': ['AB+'],
+            'AB-': ['AB+', 'AB-'],
+            'O+': ['A+', 'B+', 'O+', 'AB+'],
+            'O-': ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'],
+        };
 
-        let titulo = 'Perfil estável';
-        let mensagem = 'Os valores indicam uma tendência saudável no hemograma.';
-        let destaque = '#1c8c5c';
-
-        if (hgb < 12 || hct < 36 || plt < 150000 || wbc < 4000) {
-            titulo = 'Atenção necessária';
-            mensagem = 'Alguns valores estão abaixo do esperado e podem exigir avaliação médica.';
-            destaque = '#d97706';
+        const tiposCompativeis = compatibilidade[tipoSanguineo.toUpperCase()] || [];
+        if (tiposCompativeis.length === 0) {
+            setDoacao({
+                titulo: 'Tipo sanguíneo inválido',
+                mensagem: 'Informe um tipo sanguíneo válido (ex.: A+, O-, etc.).',
+                destaque: '#d93025',
+            });
+            return;
         }
 
-        if (hgb > 18 || hct > 52 || plt > 450000 || wbc > 11000) {
-            titulo = 'Valores elevados';
-            mensagem = 'Há indicação de aumento acima do padrão; procure orientação profissional.';
-            destaque = '#b91c1c';
-        }
-
-        setResultado({ titulo, mensagem, destaque });
+        setDoacao({
+            titulo: 'Compatibilidade de doação',
+            mensagem: `Você pode doar para os seguintes tipos: ${tiposCompativeis.join(', ')}`,
+            destaque: '#1c8c5c',
+        });
     }
 
     return (
@@ -65,52 +69,22 @@ export default function Sangue() {
                     <Text style={styles.sectionTitle}>Dados laboratoriais</Text>
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Hemoglobina (g/dL)</Text>
+                        <Text style={styles.label}>Tipo Sanguíneo</Text>
                         <Input
-                            placeholder="Ex.: 14,2"
-                            keyboardType="decimal-pad"
-                            value={hemoglobina}
-                            onChangeText={setHemoglobina}
+                            placeholder="Ex.: A+"
+                            value={tipoSanguineo}
+                            onChangeText={setTipoSanguineo}
                         />
                     </View>
 
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Hematócrito (%)</Text>
-                        <Input
-                            placeholder="Ex.: 42"
-                            keyboardType="decimal-pad"
-                            value={hematocrito}
-                            onChangeText={setHematocrito}
-                        />
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Plaquetas (µL)</Text>
-                        <Input
-                            placeholder="Ex.: 250000"
-                            keyboardType="number-pad"
-                            value={plaquetas}
-                            onChangeText={setPlaquetas}
-                        />
-                    </View>
-
-                    <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Leucócitos (µL)</Text>
-                        <Input
-                            placeholder="Ex.: 7600"
-                            keyboardType="number-pad"
-                            value={leucocitos}
-                            onChangeText={setLeucocitos}
-                        />
-                    </View>
-
-                    <Button label="Avaliar resultados" onPress={analisarDados} />
+                    <Button label="Verificar compatibilidade de doação" onPress={verificarDoacao} />
                 </View>
 
-                {resultado && (
-                    <View style={[styles.resultCard, { borderColor: resultado.destaque }]}>
-                        <Text style={[styles.resultTitle, { color: resultado.destaque }]}>{resultado.titulo}</Text>
-                        <Text style={styles.resultMessage}>{resultado.mensagem}</Text>
+
+                {doacao && (
+                    <View style={[styles.resultCard, { borderColor: doacao.destaque }]}>
+                        <Text style={[styles.resultTitle, { color: doacao.destaque }]}>{doacao.titulo}</Text>
+                        <Text style={styles.resultMessage}>{doacao.mensagem}</Text>
                     </View>
                 )}
             </View>
