@@ -1,8 +1,9 @@
 import {TextInput, StyleSheet} from 'react-native';
 
-export default function Input({value, onChangeText, placeholder, keyboardType}) {
+export default function Input({value, onChangeText, placeholder, keyboardType, ...props}) {
     return (
         <TextInput
+            {...props}
             style={styles.input}
             value={value}
             onChangeText={onChangeText}

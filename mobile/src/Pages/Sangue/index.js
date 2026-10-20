@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { View, Text, ScrollView } from 'react-native';
 
 import styles from './style';
 import Button from '../../components/Button';
-import Input from '../../components/Input';
+import BloodTypeSelect from '../../components/BloodTypeSelect';
 
 export default function Sangue() {
     
-    const [tipoSanguineo, setTipoSanguineo] = useState('');
+    const { user, updateProfile } = useAuth();
+    const tipoSanguineo = user.bloodType || '';
     const [doacao, setDoacao] = useState(null);
+    useEffect(() => { setDoacao(null); }, [tipoSanguineo]);
 
 
 
@@ -44,8 +47,8 @@ export default function Sangue() {
         }
 
         setDoacao({
-            titulo: 'Compatibilidade de doação',
-            mensagem: `Você pode doar para os seguintes tipos: ${tiposCompativeis.join(', ')}`,
+            titulo: 'Compatibilidade de hemácias',
+            mensagem: `Na doação de hemácias, você pode doar para: ${tiposCompativeis.join(', ')}`,
             destaque: '#1c8c5c',
         });
     }
@@ -61,19 +64,18 @@ export default function Sangue() {
                     <View style={styles.headerText}>
                         <Text style={styles.kicker}>Monitoramento</Text>
                         <Text style={styles.title}>Sangue</Text>
-                        <Text style={styles.subtitle}>Avaliação rápida do hemograma</Text>
+                        <Text style={styles.subtitle}>Consulte seu tipo sanguíneo</Text>
                     </View>
                 </View>
 
                 <View style={styles.card}>
-                    <Text style={styles.sectionTitle}>Dados laboratoriais</Text>
+                    <Text style={styles.sectionTitle}>Seu tipo sanguíneo</Text>
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Tipo Sanguíneo</Text>
-                        <Input
-                            placeholder="Ex.: A+"
+                        <BloodTypeSelect
                             value={tipoSanguineo}
-                            onChangeText={setTipoSanguineo}
+                            onChange={(value) => { updateProfile({ bloodType: value }); setDoacao(null); }}
                         />
                     </View>
 

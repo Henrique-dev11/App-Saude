@@ -5,6 +5,8 @@ import styles from './style';
 import Button from '../../components/ButtonAgua';
 import Input from '../../components/Input';
 import Card from '../../components/card';
+import { useAuth } from '../../contexts/AuthContext';
+import { parseWeight } from '../../Function/functionPerfil';
 import {
     calcularMeta,
     adicionarConsumo,
@@ -15,9 +17,16 @@ import {
 
 
 export default function Agua() {
-    const [peso, setPeso] = useState('');
-    const [metaDiaria, setMetaDiaria] = useState(0);
+    const { user, updateProfile } = useAuth();
+    const [peso, setPeso] = useState(String(user.weight ?? ''));
+    const [metaDiaria, setMetaDiaria] = useState(() => calcularMeta(user.weight || 0));
     const [consumoAtual, setConsumoAtual] = useState(0);
+
+    useEffect(() => {
+        setPeso(String(user.weight ?? ''));
+        setMetaDiaria(calcularMeta(user.weight || 0));
+        setConsumoAtual(0);
+    }, [user.weight]);
 
     const wave1 = useRef(new Animated.Value(0)).current;
     const wave2 = useRef(new Animated.Value(0)).current;
@@ -52,16 +61,17 @@ export default function Agua() {
 
     //Funções para calcular a meta de consumo de água, adicionar água e resetar a meta
     function calcularAgua() {
-        const valor = peso.toString().replace(',', '.').trim();
-        const pesoNum = Number(valor);
+        const valor = peso.trim();
+        const pesoNum = parseWeight(valor);
 
-        if (!valor || Number.isNaN(pesoNum) || pesoNum <= 0) {
+        if (!valor || !Number.isFinite(pesoNum) || pesoNum <= 0) {
             setMetaDiaria(0);
             setConsumoAtual(0);
             return;
         }
 
-        const totalMl = pesoNum * 35;
+        updateProfile({ weight: pesoNum });
+        const totalMl = calcularMeta(pesoNum);
         setMetaDiaria(totalMl);
         setConsumoAtual(0);
     }
@@ -78,9 +88,9 @@ export default function Agua() {
     }
 
     function resetMeta() {
-        setMetaDiaria(0);
+        setMetaDiaria(calcularMeta(user.weight || 0));
         setConsumoAtual(0);
-        setPeso('');
+        setPeso(String(user.weight ?? ''));
     }
 // Segurança para evitar divisão por zero
     const restante = metaDiaria > 0 ? Math.max(metaDiaria - consumoAtual, 0) : 0;
