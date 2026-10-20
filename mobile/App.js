@@ -1,3 +1,9 @@
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import Avatar from './src/components/Avatar';
+import Login from './src/Pages/Login';
+import Cadastro from './src/Pages/Cadastro';
+import Perfil from './src/Pages/Perfil';
 import { StyleSheet, View, ScrollView, Text } from 'react-native';
 import UserCard from './src/components/Usercard';
 
@@ -35,10 +41,11 @@ const cards = [
 ];
 
 function Home({ navigation }) {
+    const { user } = useAuth();
     return (
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+        <SafeAreaView style={styles.scroll}><ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
             <View style={styles.header}>
-                <Text style={styles.headerTitle}>Bem-vindo</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><Text style={[styles.headerTitle, { flex: 1 }]}>Olá, {user.name}!</Text><Avatar name={user.name} photo={user.photo} onPress={() => navigation.navigate('Perfil')} /></View>
                 <Text style={styles.headerSubtitle}>Seu cuidado diário em um lugar só</Text>
             </View>
 
@@ -53,76 +60,84 @@ function Home({ navigation }) {
                     />
                 ))}
             </View>
-        </ScrollView>
+        </ScrollView></SafeAreaView>
     );
 }
 
-export default function App() {
+function AppNavigator() {
+    const { user } = useAuth();
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator screenOptions={({ navigation }) => ({ headerRight: () => user ? <Avatar name={user.name} photo={user.photo} onPress={() => navigation.navigate('Perfil')} /> : null })}>
+                {!user ? <Stack.Group navigationKey="guest">
+                    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                    <Stack.Screen name="Cadastro" component={Cadastro} options={{ title: 'Cadastro' }} />
+                </Stack.Group> : <Stack.Group navigationKey="user">
+
                 <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
 
-                <Stack.Screen 
-                    name="Imc" 
-                    component={Imc} 
-                    options={{ title: 'IMC' }} 
+                <Stack.Screen
+                    name="Imc"
+                    component={Imc}
+                    options={{ title: 'IMC' }}
                 />
-                <Stack.Screen 
-                    name="Sangue" 
-                    component={Sangue} 
-                    options={{ title: 'Sangue' }} 
+                <Stack.Screen
+                    name="Sangue"
+                    component={Sangue}
+                    options={{ title: 'Sangue' }}
                 />
-                <Stack.Screen 
-                    name="Agua" 
-                    component={Agua} 
-                    options={{ title: 'Água' }} 
+                <Stack.Screen
+                    name="Agua"
+                    component={Agua}
+                    options={{ title: 'Água' }}
                 />
-                <Stack.Screen 
-                    name="Remedio" 
-                    component={Remedio} 
-                    options={{ title: 'Remédio' }} 
+                <Stack.Screen
+                    name="Remedio"
+                    component={Remedio}
+                    options={{ title: 'Remédio' }}
                 />
-                <Stack.Screen 
-                    name="Alergias" 
-                    component={Alergias} 
-                    options={{ title: 'Alergias' }} 
+                <Stack.Screen
+                    name="Alergias"
+                    component={Alergias}
+                    options={{ title: 'Alergias' }}
                 />
-                <Stack.Screen 
-                    name="Glicemia" 
-                    component={Glicemia} 
-                    options={{ title: 'Glicemia' }} 
+                <Stack.Screen
+                    name="Glicemia"
+                    component={Glicemia}
+                    options={{ title: 'Glicemia' }}
                 />
-                <Stack.Screen 
-                    name="Pressao" 
-                    component={Pressao} 
-                    options={{ title: 'Pressão' }} 
+                <Stack.Screen
+                    name="Pressao"
+                    component={Pressao}
+                    options={{ title: 'Pressão' }}
                 />
-                <Stack.Screen 
-                    name="Vacinas" 
-                    component={Vacinas} 
-                    options={{ title: 'Vacinas' }} 
+                <Stack.Screen
+                    name="Vacinas"
+                    component={Vacinas}
+                    options={{ title: 'Vacinas' }}
                 />
-                <Stack.Screen 
-                    name="Meditacao" 
-                    component={Meditacao} 
-                    options={{ title: 'Meditação' }} 
+                <Stack.Screen
+                    name="Meditacao"
+                    component={Meditacao}
+                    options={{ title: 'Meditação' }}
                 />
-                <Stack.Screen 
-                    name="Fruta" 
-                    component={Fruta} 
-                    options={{ title: 'Fruta' }} 
+                <Stack.Screen
+                    name="Fruta"
+                    component={Fruta}
+                    options={{ title: 'Fruta' }}
                 />
-                <Stack.Screen 
-                    name="Dica" 
-                    component={Dica} 
-                    options={{ title: 'Dica' }} 
+                <Stack.Screen
+                    name="Dica"
+                    component={Dica}
+                    options={{ title: 'Dica' }}
                 />
-                <Stack.Screen 
-                    name="Emergencia" 
-                    component={Emergencia} 
-                    options={{ title: 'Emergência' }} 
+                <Stack.Screen
+                    name="Emergencia"
+                    component={Emergencia}
+                    options={{ title: 'Emergência' }}
                 />
+            <Stack.Screen name="Perfil" component={Perfil} options={{ title: 'Meu perfil', headerRight: () => null }} />
+                </Stack.Group>}
             </Stack.Navigator>
         </NavigationContainer>
     );
@@ -161,3 +176,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#edf8ff',
     },
 });
+export default function App() {
+    return <SafeAreaProvider><AuthProvider><AppNavigator /></AuthProvider></SafeAreaProvider>;
+}
