@@ -1,0 +1,10 @@
+npm install @react-navigation/native
+npx expo install react-native-screens react-native-safe-area-context
+npm install @react-navigation/native-stack
+npm install react-native-svg
+
+desinstalar pelo windows:
+rmdir /s /q node_modules
+
+desinstalar pelo linux:
+rm -rf node_modules
